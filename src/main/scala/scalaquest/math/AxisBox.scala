@@ -4,9 +4,9 @@ import scala.math._
 
 import scalaquest.util._
 
-case class AxisBox(a: Vec, b: Vec) extends Area {
-  val p0 = Vec(min(a.x, b.x), min(a.y, b.y))
-  val p1 = Vec(max(a.x, b.x), max(a.y, b.y))
+case class AxisBox(val a: Vec, val b: Vec) extends Area {
+  lazy val p0 = Vec(min(a.x, b.x), min(a.y, b.y))
+  lazy val p1 = Vec(max(a.x, b.x), max(a.y, b.y))
 
   def x0 = p0.x
   def y0 = p0.y
@@ -35,9 +35,9 @@ case class AxisBox(a: Vec, b: Vec) extends Area {
     Vec(dx, dy)
   }
 
-  def clip(p: Vec) = Vec(math.max(x0, math.min(x1, p.x)),
-               math.max(y0, math.min(y1, p.y)))
-
+  def clip(p: Vec) = Vec(
+    math.max(x0, math.min(x1, p.x)),
+    math.max(y0, math.min(y1, p.y)))
 }
 
 object AxisBox {

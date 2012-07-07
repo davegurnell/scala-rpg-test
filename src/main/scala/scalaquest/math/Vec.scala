@@ -34,6 +34,12 @@ case class Vec(x: Double, y: Double) {
   def extend(len: Double): Vec =
     if(this.length >= len) this else this.normalize * len
 
+  def floor: Vec = Vec(x.floor, y.floor)
+
+  def ceil: Vec = Vec(x.ceil, y.ceil)
+
+  def round: Vec = Vec(x.round, y.round)
+
   def clip(box: AxisBox) =
     Vec(min(max(x, box.x0), box.x1),
       min(max(y, box.y0), box.y1))

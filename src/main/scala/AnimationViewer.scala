@@ -3,7 +3,7 @@ package scalaquest
 import java.awt._
 import javax.swing._
 import scalaquest.math._
-import scalaquest.sprite._
+import scalaquest.asset._
 import scalaquest.swing._
 
 object AnimationViewer {
@@ -21,12 +21,10 @@ object AnimationViewer {
 
   /** Show a Sprite viewer with the following sprite */
   def showSprite(name: String): Unit = {
-    val sprite = SpriteLibrary.get(name)
-
-    println("Viewing " + sprite)
+    val sprites = Sprite.loadAll(name)
 
     val frame = new JFrame("SpriteViewer: " + name)
-    val canvas = new SpritePanel(sprite)
+    val canvas = new SpritePanel(sprites)
     frame.setContentPane(canvas)
     frame.pack()
     frame.setVisible(true)
@@ -37,10 +35,10 @@ object AnimationViewer {
     }
   }
 
-  class SpritePanel(val sprite: Sprite) extends JPanel with SpriteRenderer {
+  class SpritePanel(val sprites: Seq[Sprite]) extends JPanel with SpriteRenderer {
     setPreferredSize(new Dimension(
-      Sprite.Scale * 50 * sprite.maxAnimationLength,
-      Sprite.Scale * 50 * sprite.numAnimations
+      Tile.size * 20,
+      Tile.size * sprites.length * 4
     ))
 
     override def paintComponent(graphics: Graphics): Unit = {
@@ -48,17 +46,19 @@ object AnimationViewer {
 
       val g = graphics.asInstanceOf[Graphics2D]
       for {
-        animation <- sprite.animations.values
-      } yield {
-        val frame = (time % animation.length).toInt
+        (sprite, row) <- sprites.zipWithIndex
+      } {
+        val rowPos = Vec(0, row) * 4
 
-        val pos = Vec(0, 50 * animation.row)
-        val des = spriteDesBox(sprite, pos)
-        g.setColor(Color.WHITE)
-        g.fillRect(des.x0.toInt, des.y0.toInt, des.w.toInt, des.h.toInt)
-        fillSprite(g, pos, sprite, animation, frame)
-        g.setColor(Color.BLACK)
-        g.drawRect(des.x0.toInt, des.y0.toInt, des.w.toInt, des.h.toInt)
+        for {
+          x <- 0 to 20
+          y <- 0 to 2
+          val tile = if(x == 1 && y == 1) Tile.grass else Tile.pavement
+          val pos  = rowPos + Vec(x, y)
+        } paintTile(g, pos, tile)
+
+        paintSprite(g, rowPos + Vec(1, 1), sprite)
+        paintLabel(g, rowPos + Vec(2.75, 1.75), sprite.name)
       }
     }
   }

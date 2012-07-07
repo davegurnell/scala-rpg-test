@@ -2,48 +2,115 @@ package scalaquest.swing
 
 import java.awt._
 import scalaquest.math._
-import scalaquest.sprite._
+import scalaquest.asset._
 
 trait SpriteRenderer {
+  // Frame rate:
+
+  val frameRate: Int = 5 // fps
+  val startTime = System.currentTimeMillis
+
+  def currentFrame: Int = {
+    ((System.currentTimeMillis - startTime) * frameRate / 1000L).toInt
+  }
 
   // Metrics:
 
-  def spriteSrcBox(sprite: Sprite, animation: Animation, index: Int): AxisBox = {
+  def worldToScreen(pos: Vec) = pos * Tile.size
+
+  def tileSrcBox(tile: Tile): AxisBox = {
     AxisBox.xywh(
-      Sprite.Scale * sprite.width  * index,
-      Sprite.Scale * sprite.height * animation.row,
-      Sprite.Scale * sprite.width,
-      Sprite.Scale * sprite.height
+      Tile.size * tile.x,
+      Tile.size * tile.y,
+      Tile.size,
+      Tile.size
+    )
+  }
+
+  def tileDesBox(pos: Vec): AxisBox = {
+    AxisBox.xywh(
+      Tile.size * pos.x,
+      Tile.size * pos.y,
+      Tile.size,
+      Tile.size
     )
   }
 
   def spriteDesBox(sprite: Sprite, pos: Vec): AxisBox = {
-    AxisBox.xywh(
-      Sprite.Scale * pos.x,
-      Sprite.Scale * pos.y,
-      Sprite.Scale * sprite.width,
-      Sprite.Scale * sprite.height
-    )
+    val screenPos = worldToScreen(pos)
+    val x0 = screenPos.x + sprite.offsetX
+    val y0 = screenPos.y + sprite.offsetY
+    val x1 = x0 + sprite.width
+    val y1 = y0 + sprite.height
+    if(sprite.flipX) {
+      if(sprite.flipY) {
+        AxisBox(x1, y1, x0, y0)
+      } else {
+        AxisBox(x1, y0, x0, y1)
+      }
+    } else {
+      if(sprite.flipY) {
+        AxisBox(x0, y1, x1, y0)
+      } else {
+        AxisBox(x0, y0, x1, y1)
+      }
+    }
   }
 
   // Painting:
 
-  def fillSprite(g: Graphics2D, pos: Vec, sprite: Sprite, animation: Animation, index: Int): Unit = {
-    val s = spriteSrcBox(sprite, animation, index)
-    val d = spriteDesBox(sprite, pos)
-    g.drawImage(
+  def paintTile(g: Graphics2D, pos: Vec, tile: Tile): Unit = {
+    paintImage(
+      g,
+      Tile.image,
+      tileSrcBox(tile),
+      tileDesBox(pos)
+    )
+  }
+
+  def paintSprite(g: Graphics2D, pos: Vec, sprite: Sprite, frameNumber: Int = currentFrame): Unit = {
+    paintImage(
+      g,
       sprite.image,
-      d.x0.toInt,
-      d.y0.toInt,
-      d.x1.toInt,
-      d.y1.toInt,
-      s.x0.toInt,
-      s.y0.toInt,
-      s.x1.toInt,
-      s.y1.toInt,
+      sprite.frame(frameNumber),
+      spriteDesBox(sprite, pos)
+    )
+  }
+
+  def paintTileBox(g: Graphics2D, pos: Vec, paint: Paint = Color.BLACK): Unit = {
+    val box = tileDesBox(pos)
+    g.setPaint(paint)
+    g.drawRect(
+      box.x0.toInt,
+      box.y0.toInt,
+      box.w.toInt,
+      box.w.toInt
+    )
+  }
+
+  def paintLabel(g: Graphics2D, pos: Vec, label: String, paint: Paint = Color.BLACK): Unit = {
+    val screenPos = worldToScreen(pos)
+    g.setPaint(paint)
+    g.drawString(
+      label,
+      screenPos.x.toInt,
+      screenPos.y.toInt
+    )
+  }
+
+  def paintImage(g: Graphics2D, image: Image, src: AxisBox, des: AxisBox): Unit = {
+    g.drawImage(
+      image,
+      des.a.x.toInt,
+      des.a.y.toInt,
+      des.b.x.toInt,
+      des.b.y.toInt,
+      src.a.x.toInt,
+      src.a.y.toInt,
+      src.b.x.toInt,
+      src.b.y.toInt,
       null,
       null
     )
   }
-
 }
