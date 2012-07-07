@@ -6,25 +6,22 @@ import scalaquest.math._
 import scalaquest.asset._
 import scalaquest.swing._
 
-object AnimationViewer {
-  /** Main entry point */
+object AnimationTest {
   def main(args: Array[String]): Unit = {
     args.toList match {
       case spriteName :: _ =>
-        showSprite(spriteName)
+        showFrame(spriteName)
 
       case _ =>
-        println("Usage: SpriteViewer <spriteName>")
+        println("Usage: AnimationTest <spriteName>")
         exit(1)
     }
   }
 
   /** Show a Sprite viewer with the following sprite */
-  def showSprite(name: String): Unit = {
-    val sprites = Sprite.loadAll(name)
-
-    val frame = new JFrame("SpriteViewer: " + name)
-    val canvas = new SpritePanel(sprites)
+  def showFrame(spriteName: String): Unit = {
+    val frame = new JFrame("Animation test: " + spriteName)
+    val canvas = new SpritePanel(Sprite.loadAll(spriteName))
     frame.setContentPane(canvas)
     frame.pack()
     frame.setVisible(true)

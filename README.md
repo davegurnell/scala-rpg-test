@@ -19,6 +19,8 @@ Licence and acknowledgements
 
 Most code under `src/{main,test}` is Copyright Dave Gurnell and is [Apache 2.0].
 
+The simplex noise code in `src/main/java/scalaquest/math` is Copyright Stefan Gustavson and Peter Eastman and is public domain. See [Stefan's paper](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf) for more information.
+
 The Browserquest graphics in `src/main/resources/{img,json}` are Copyright Mozilla Corporation and [CC-BY-SA 3.0].
 
 [Apache 2.0]: http://www.apache.org/licenses/LICENSE-2.0.html

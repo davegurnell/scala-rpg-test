@@ -9,8 +9,19 @@ import scalaquest.swing._
 
 object MovementTest {
   def main(args: Array[String]): Unit = {
-    val frame = new JFrame("Movement test")
-    val canvas = new MovementCanvas
+    args.toList match {
+      case spriteName :: _ =>
+        showFrame(spriteName)
+
+      case _ =>
+        println("Usage: MovementTest <spriteName>")
+        exit(1)
+    }
+  }
+
+  def showFrame(spriteName: String): Unit = {
+    val frame = new JFrame("Movement test: " + spriteName)
+    val canvas = new MovementCanvas(spriteName)
     frame.setContentPane(canvas)
     frame.addKeyListener(canvas)
     frame.pack()
@@ -22,7 +33,7 @@ object MovementTest {
     }
   }
 
-  class MovementCanvas extends JPanel with SpriteRenderer with KeyListener {
+  class MovementCanvas(val spriteName: String) extends JPanel with SpriteRenderer with KeyListener {
 
     val worldSize = 16
 
@@ -31,16 +42,16 @@ object MovementTest {
     var playerSpeed: Double = 0.0
     val playerMaxSpeed: Double = 0.1
     val playerSpritesIdle = Map[Facing, Sprite](
-      North -> Sprite.load("leatherarmor", "idle_up"),
-      East  -> Sprite.load("leatherarmor", "idle_right"),
-      South -> Sprite.load("leatherarmor", "idle_down"),
-      West  -> Sprite.load("leatherarmor", "idle_right", flipX = true)
+      North -> Sprite.load(spriteName, "idle_up"),
+      East  -> Sprite.load(spriteName, "idle_right"),
+      South -> Sprite.load(spriteName, "idle_down"),
+      West  -> Sprite.load(spriteName, "idle_right", flipX = true)
     )
     val playerSpritesWalk = Map[Facing, Sprite](
-      North -> Sprite.load("leatherarmor", "walk_up"),
-      East  -> Sprite.load("leatherarmor", "walk_right"),
-      South -> Sprite.load("leatherarmor", "walk_down"),
-      West  -> Sprite.load("leatherarmor", "walk_right", flipX = true)
+      North -> Sprite.load(spriteName, "walk_up"),
+      East  -> Sprite.load(spriteName, "walk_right"),
+      South -> Sprite.load(spriteName, "walk_down"),
+      West  -> Sprite.load(spriteName, "walk_right", flipX = true)
     )
 
     var initialized = false
