@@ -21,6 +21,9 @@ case class AxisBox(val a: Vec, val b: Vec) extends Area {
   def +(v: Vec) = AxisBox(a + v, b + v)
   def -(v: Vec) = AxisBox(a - v, b - v)
 
+  def *(d: Double) = AxisBox(a * d, b * d)
+  def /(d: Double) = AxisBox(a / d, b / d)
+
   def randomPoint = Vec(
     x0 + math.random * (x1 - x0),
     y0 + math.random * (y1 - y0))

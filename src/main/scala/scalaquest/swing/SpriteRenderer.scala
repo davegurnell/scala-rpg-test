@@ -1,13 +1,14 @@
 package scalaquest.swing
 
 import java.awt._
+import java.awt.image.BufferedImage
 import scalaquest.math._
 import scalaquest.asset._
 
 trait SpriteRenderer {
   // Frame rate:
 
-  val frameRate: Int = 5 // fps
+  val frameRate = 5 // fps
   val startTime = System.currentTimeMillis
 
   def currentFrame: Int = {
@@ -16,14 +17,14 @@ trait SpriteRenderer {
 
   // Metrics:
 
-  def worldToScreen(pos: Vec) = pos * Tile.size
+  def worldToScreen(pos: Vec) = pos * TerrainTile.size
 
-  def tileSrcBox(tile: Tile): AxisBox = {
+  def tileSrcBox(tile: BufferedImage): AxisBox = {
     AxisBox.xywh(
-      Tile.size * tile.x,
-      Tile.size * tile.y,
-      Tile.size,
-      Tile.size
+      0,
+      0,
+      TerrainTile.size,
+      TerrainTile.size
     )
   }
 
@@ -31,8 +32,8 @@ trait SpriteRenderer {
     AxisBox.xywh(
       pos.x,
       pos.y,
-      Tile.size,
-      Tile.size
+      TerrainTile.size,
+      TerrainTile.size
     )
   }
 
@@ -59,10 +60,10 @@ trait SpriteRenderer {
 
   // Painting:
 
-  def paintTile(g: Graphics2D, pos: Vec, tile: Tile): Unit = {
+  def paintTile(g: Graphics2D, pos: Vec, tile: BufferedImage): Unit = {
     paintImage(
       g,
-      Tile.image,
+      tile,
       tileSrcBox(tile),
       tileDesBox(pos)
     )
@@ -71,8 +72,8 @@ trait SpriteRenderer {
   def paintSprite(g: Graphics2D, pos: Vec, sprite: Sprite, frameNumber: Int = currentFrame): Unit = {
     paintImage(
       g,
-      sprite.image,
       sprite.frame(frameNumber),
+      AxisBox(0, 0, sprite.width, sprite.height),
       spriteDesBox(sprite, pos)
     )
   }

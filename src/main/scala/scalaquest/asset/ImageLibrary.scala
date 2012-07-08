@@ -1,15 +1,15 @@
 package scalaquest.asset
 
-import java.awt.Image
+import java.awt.image.BufferedImage
 import java.net.URL
-import javax.swing.ImageIcon
+import javax.imageio.ImageIO
 
 /**
  * Image loader and cache. Invoke using the get() method from ResourceLibrary, e.g.:
  *
- *     ImageLibrary.load(SpriteLoader.get("agent").id)
+ *     ImageLibrary.load("agent")
  */
-object ImageLibrary extends ResourceLibrary[String, Image] {
+object ImageLibrary extends ResourceLibrary[String, BufferedImage] {
   /** Turn a sprite name ("agent") into a JAR URL ("file://.../img/1/agent.png"). */
   private[asset] def url(name: String): URL = {
     Option(getClass.getResource("/img/1/%s.png".format(name))).getOrElse {
@@ -18,7 +18,7 @@ object ImageLibrary extends ResourceLibrary[String, Image] {
   }
 
   /** Load a resource from its URL */
-  private[asset] def loadUrl(url: URL): Image = {
-    new ImageIcon(url).getImage
+  private[asset] def loadUrl(url: URL): BufferedImage = {
+    ImageIO.read(url)
   }
 }

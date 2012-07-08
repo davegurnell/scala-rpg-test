@@ -9,12 +9,8 @@ import scalaquest.swing._
 object AnimationTest {
   def main(args: Array[String]): Unit = {
     args.toList match {
-      case spriteName :: _ =>
-        showFrame(spriteName)
-
-      case _ =>
-        println("Usage: AnimationTest <spriteName>")
-        exit(1)
+      case spriteName :: _ => showFrame(spriteName)
+      case _ => showFrame("leatherarmor")
     }
   }
 
@@ -34,8 +30,8 @@ object AnimationTest {
 
   class SpritePanel(val sprites: Seq[Sprite]) extends JPanel with SpriteRenderer {
     setPreferredSize(new Dimension(
-      Tile.size * 20,
-      Tile.size * sprites.length * 4
+      TerrainTile.size * 20,
+      TerrainTile.size * sprites.length * 4
     ))
 
     override def paintComponent(graphics: Graphics): Unit = {
@@ -50,9 +46,9 @@ object AnimationTest {
         for {
           x <- 0 to 20
           y <- 0 to 2
-          val tile = if(x == 1 && y == 1) Tile.grass else Tile.pavement
+          val tile = if(x == 1 && y == 1) TerrainTile.grassOnEarth.Center.TL else TerrainTile.earthOnWater.Center.TL
           val pos  = rowPos + Vec(x, y)
-        } paintTile(g, pos * Tile.size, tile)
+        } paintTile(g, pos * TerrainTile.size, tile)
 
         paintSprite(g, rowPos + Vec(1, 1), sprite)
         paintLabel(g, rowPos + Vec(2.75, 1.75), sprite.name)

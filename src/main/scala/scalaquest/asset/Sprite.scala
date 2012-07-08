@@ -1,21 +1,21 @@
 package scalaquest.asset
 
 import java.awt._
+import java.awt.image.BufferedImage
 import scalaquest.math._
 
 case class Sprite(
   val name: String,
-  val image: Image,
   val width: Int,
   val height: Int,
-  val frames: Array[AxisBox],
+  val frames: Array[BufferedImage],
   val offsetX: Int,
   val offsetY: Int,
   val flipX: Boolean,
   val flipY: Boolean
 ) {
   lazy val numFrames = frames.length
-  def frame(num: Int): AxisBox = {
+  def frame(num: Int): BufferedImage = {
     frames(num % numFrames)
   }
 }
@@ -26,11 +26,10 @@ object Sprite {
     val animationMeta = spriteMeta.animation(rowName)
     Sprite(
       spriteName + "." + rowName,
-      spriteMeta.image,
       spriteMeta.width,
       spriteMeta.height,
       (for(col <- 0 until animationMeta.length) yield {
-        AxisBox.xywh(
+        spriteMeta.image.getSubimage(
           col * spriteMeta.width,
           animationMeta.row * spriteMeta.height,
           spriteMeta.width,

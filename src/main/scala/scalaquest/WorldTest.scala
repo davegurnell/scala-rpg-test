@@ -26,13 +26,10 @@ object WorldTest {
     }
   }
 
-  class WorldCanvas(val world: World) extends JPanel with SpriteRenderer {
+  class WorldCanvas(val world: World) extends JPanel {
     var viewPos = Vec(0, 0)
 
-    setPreferredSize(new Dimension(
-      500,
-      500
-    ))
+    setPreferredSize(new Dimension(500, 500))
 
     def frame(): Unit = {
       viewPos += Vec(.1, .1)
@@ -40,16 +37,9 @@ object WorldTest {
     }
 
     override def paintComponent(graphics: Graphics): Unit = {
-      val g = graphics.asInstanceOf[Graphics2D]
+      val renderer = new WorldRenderer(world, graphics.asInstanceOf[Graphics2D], viewPos)
       val size = getSize()
-      val viewBox = AxisBox.xywh(viewPos.x, viewPos.y, size.width / Tile.size, size.height / Tile.size)
-
-      for {
-        y <- viewBox.y0.toInt until viewBox.y1.ceil.toInt
-        x <- viewBox.x0.toInt until viewBox.x1.ceil.toInt
-        val worldPos = Vec(x, y)
-        val screenPos = (worldPos - viewPos) * Tile.size
-      } paintTile(g, screenPos, world.get(worldPos))
+      renderer.renderSquares(AxisBox(0, 0, size.width, size.height))
     }
   }
 }

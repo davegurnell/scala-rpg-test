@@ -10,12 +10,8 @@ import scalaquest.swing._
 object MovementTest {
   def main(args: Array[String]): Unit = {
     args.toList match {
-      case spriteName :: _ =>
-        showFrame(spriteName)
-
-      case _ =>
-        println("Usage: MovementTest <spriteName>")
-        exit(1)
+      case spriteName :: _ => showFrame(spriteName)
+      case _ => showFrame("leatherarmor")
     }
   }
 
@@ -57,8 +53,8 @@ object MovementTest {
     var initialized = false
 
     setPreferredSize(new Dimension(
-      Tile.size * worldSize,
-      Tile.size * worldSize
+      TerrainTile.size * worldSize,
+      TerrainTile.size * worldSize
     ))
 
     def frame(): Unit = {
@@ -81,13 +77,13 @@ object MovementTest {
       for {
         j <- 0 until worldSize
         i <- 0 until worldSize
-      } paintTile(g, Vec(i, j) * Tile.size, Tile.grass)
+      } paintTile(g, Vec(i, j) * TerrainTile.size, TerrainTile.grassOnEarth.Center.TL)
     }
 
     def paintWorldUnderPlayer(g: Graphics2D): Unit = {
       val base = playerPos.floor
       for(x <- -1 to 1; y <- -1 to 1) {
-        paintTile(g, (base + Vec(x, y)) * Tile.size, Tile.grass)
+        paintTile(g, (base + Vec(x, y)) * TerrainTile.size, TerrainTile.grassOnEarth.Center.TL)
       }
     }
 

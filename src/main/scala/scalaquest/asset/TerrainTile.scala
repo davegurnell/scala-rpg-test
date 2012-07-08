@@ -1,0 +1,69 @@
+package scalaquest.asset
+
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+import scalaquest.util._
+
+object TerrainTile {
+  val size = 16 // pixels
+  val image = ImageLibrary.load("tilesheet")
+
+  // Tiles:
+
+  val water        = single(5, 20)
+  val earthOnWater = region( 8, 24,  5, 20)
+  val grassOnEarth = region(11,  4, 10, 27)
+  val scrubOnGrass = region( 2, 24, 12,  7)
+  val sandOnScrub  = region(14, 24,  4, 27)
+
+  // Composition and arrangement:
+
+  def single(x: Int, y: Int): BufferedImage = {
+    image.getSubimage(x * size, y * size, size, size)
+  }
+
+  def compose(a: BufferedImage, b: BufferedImage): BufferedImage = {
+    val ans = new BufferedImage(a.getWidth, a.getHeight, a.getType)
+    val g = ans.getGraphics.asInstanceOf[Graphics2D]
+    g.drawImage(a, 0, 0, null)
+    g.drawImage(b, 0, 0, null)
+    ans
+  }
+
+  def corners(x: Int, y: Int): Corners[BufferedImage] = {
+    new Corners[BufferedImage] {
+      val TL = single(x,   y  )
+      val TR = single(x+1, y  )
+      val BL = single(x,   y+1)
+      val BR = single(x+1, y+1)
+    }
+  }
+
+  def region(fgx: Int, fgy: Int, bgx: Int, bgy: Int): Region[BufferedImage] = {
+    val bg = single(bgx, bgy)
+    new Region[BufferedImage] {
+      val Top    = compose(bg, single(fgx+1, fgy+0))
+      val Right  = compose(bg, single(fgx+5, fgy+4))
+      val Bottom = compose(bg, single(fgx+1, fgy+5))
+      val Left   = compose(bg, single(fgx+0, fgy+4))
+      val Center = new Corners[BufferedImage] {
+        val TL   = single(fgx+3, fgy+3)
+        val TR   = single(fgx+4, fgy+3)
+        val BR   = single(fgx+4, fgy+4)
+        val BL   = single(fgx+3, fgy+4)
+      }
+      val Outer  = new Corners[BufferedImage] {
+        val TL   = compose(bg, single(fgx+0, fgy+0))
+        val TR   = compose(bg, single(fgx+5, fgy+0))
+        val BR   = compose(bg, single(fgx+5, fgy+5))
+        val BL   = compose(bg, single(fgx+0, fgy+5))
+      }
+      val Inner  = new Corners[BufferedImage] {
+        val TL   = compose(bg, single(fgx+1, fgy+1))
+        val TR   = compose(bg, single(fgx+4, fgy+1))
+        val BR   = compose(bg, single(fgx+2, fgy+3))
+        val BL   = compose(bg, single(fgx+2, fgy+2))
+      }
+    }
+  }
+}
