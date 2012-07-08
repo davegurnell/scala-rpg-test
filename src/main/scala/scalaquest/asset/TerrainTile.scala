@@ -10,11 +10,18 @@ object TerrainTile {
 
   // Tiles:
 
-  val water        = single(5, 20)
-  val earthOnWater = region( 8, 24,  5, 20)
-  val grassOnEarth = region(11,  4, 10, 27)
-  val scrubOnGrass = region( 2, 24, 12,  7)
-  val sandOnScrub  = region(14, 24,  4, 27)
+  val water           = single( 5, 20)
+  val earthOnWater    = region(11, 27,  8, 24,  5, 20)
+  val grassOnEarth    = region(14,  7, 11,  4, 10, 27)
+  val scrubOnGrass    = region( 5, 27,  2, 24, 12,  7)
+  val sandFlatOnScrub = region(18, 14, 14, 24,  4, 27)
+  val sandSemiOnScrub = region(18, 16, 14, 24,  4, 27)
+  val sandDuneOnScrub = region(18, 18, 14, 24,  4, 27)
+
+  val campfire   = single( 5,  0)
+  val tumbleweed = single(11, 15)
+  val leaf       = single(17,  5)
+  val shell      = single( 5, 91)
 
   // Composition and arrangement:
 
@@ -39,7 +46,7 @@ object TerrainTile {
     }
   }
 
-  def region(fgx: Int, fgy: Int, bgx: Int, bgy: Int): Region[BufferedImage] = {
+  def region(cx: Int, cy: Int, fgx: Int, fgy: Int, bgx: Int, bgy: Int): Region[BufferedImage] = {
     val bg = single(bgx, bgy)
     new Region[BufferedImage] {
       val Top    = compose(bg, single(fgx+1, fgy+0))
@@ -47,10 +54,10 @@ object TerrainTile {
       val Bottom = compose(bg, single(fgx+1, fgy+5))
       val Left   = compose(bg, single(fgx+0, fgy+4))
       val Center = new Corners[BufferedImage] {
-        val TL   = single(fgx+3, fgy+3)
-        val TR   = single(fgx+4, fgy+3)
-        val BR   = single(fgx+4, fgy+4)
-        val BL   = single(fgx+3, fgy+4)
+        val TL   = single(cx+0, cy+0)
+        val TR   = single(cx+1, cy+0)
+        val BR   = single(cx+1, cy+1)
+        val BL   = single(cx+0, cy+1)
       }
       val Outer  = new Corners[BufferedImage] {
         val TL   = compose(bg, single(fgx+0, fgy+0))

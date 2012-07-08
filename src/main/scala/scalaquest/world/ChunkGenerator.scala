@@ -28,52 +28,53 @@ object TestGenerator extends ChunkGenerator {
   def square(pos: Vec): Square = {
     val moisture = noise(pos / 50) * .8 + noise(pos / 20) * .2
     if(moisture < .2) {
-      Square(Sand, None)
+      desert(pos)
     } else if(moisture < .4) {
-      Square(Scrub, None)
+      scrub(pos)
     } else if(moisture < .6) {
-      Square(Grass, None)
+      grassland(pos)
     } else if(moisture < .8) {
-      Square(Earth, None)
+      earth(pos)
     } else {
-      Square(Water, None)
+      water(pos)
     }
   }
 
-  // def water(pos: Vec) = {
-  //   Water
-  // }
+  def desert(pos: Vec) = {
+    val level = noise(pos / 10)
+    if(level < .5) {
+      Square(SandFlat, possible(Tumbleweed, pos))
+    } else if(level < .8) {
+      Square(SandSemi, possible(Tumbleweed, pos))
+    } else {
+      Square(SandDune, possible(Tumbleweed, pos))
+    }
+  }
 
-  // def grassland(pos: Vec) = {
-  //   val level = noise(pos)
-  //   if(level < .7) {
-  //     Grass
-  //   } else {
-  //     Flowers
-  //   }
-  // }
+  def scrub(pos: Vec) = {
+    Square(Scrub, possible(Leaf, pos))
+  }
 
-  // def scrub(pos: Vec) = {
-  //   Scrub
-  // }
+  def grassland(pos: Vec) = {
+    Square(Grass, possible(Leaf, pos))
+  }
 
-  // def desert(pos: Vec) = {
-  //   val level = noise(pos / 10)
-  //   if(level < .5) {
-  //     SandFlat
-  //   } else if(level < .8) {
-  //     SandSemi
-  //   } else {
-  //     SandDune
-  //   }
-  // }
+  def earth(pos: Vec) = {
+    Square(Earth, possible(Shell, pos))
+  }
 
-  // def furniture(pos: Vec): Option[Furniture] = {
-  //   val level = noise(pos / 5)
-  //   if(level < .9) {
-  //     None
-  //   } else {
-  //     Some(Campfire)
-  //   }
-  // }
+  def water(pos: Vec) = {
+    Square(Water, None)
+  }
+
+  def possible(item: Furniture, pos: Vec): Option[Furniture] = {
+    val level = noise(pos / 5)
+    if(level < .1) {
+      Some(item)
+    } else if(level > .9) {
+      Some(Campfire)
+    } else {
+      None
+    }
+  }
 }

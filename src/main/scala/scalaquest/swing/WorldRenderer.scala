@@ -12,7 +12,7 @@ class WorldRenderer(
   val world: World,
   val g: Graphics2D,
   val cameraPos: Vec,
-  val zoom: Double = .5
+  val zoom: Double = 3
 ) {
   val scale = TerrainTile.size * zoom
   val worldToViewTx = new AffineTransform(scale, 0, 0, scale, -scale * cameraPos.x, -scale * cameraPos.y)
@@ -55,12 +55,15 @@ class WorldRenderer(
   }
 
   def terrainTile(x: Int, y: Int): BufferedImage = {
-    world.get(x, y).terrain match {
+    val terrain = world.get(x, y).terrain
+    terrain match {
       case Water => TerrainTile.water
-      case Earth => areaTile(x, y, Water, TerrainTile.earthOnWater)
-      case Grass => areaTile(x, y, Earth, TerrainTile.grassOnEarth)
-      case Scrub => areaTile(x, y, Grass, TerrainTile.scrubOnGrass)
-      case Sand  => areaTile(x, y, Scrub, TerrainTile.sandOnScrub)
+      case Earth => areaTile(x, y, terrain.level, TerrainTile.earthOnWater)
+      case Grass => areaTile(x, y, terrain.level, TerrainTile.grassOnEarth)
+      case Scrub => areaTile(x, y, terrain.level, TerrainTile.scrubOnGrass)
+      case SandFlat => areaTile(x, y, terrain.level, TerrainTile.sandFlatOnScrub)
+      case SandSemi => areaTile(x, y, terrain.level, TerrainTile.sandSemiOnScrub)
+      case SandDune => areaTile(x, y, terrain.level, TerrainTile.sandDuneOnScrub)
     }
   }
 
@@ -74,8 +77,11 @@ class WorldRenderer(
 
   def furnitureTile(x: Int, y: Int): Option[BufferedImage] = {
     world.get(x,  y).furniture match {
-      case Some(Campfire) => None
-      case None           => None
+      case Some(Campfire)   => Some(TerrainTile.campfire)
+      case Some(Tumbleweed) => Some(TerrainTile.tumbleweed)
+      case Some(Leaf)       => Some(TerrainTile.leaf)
+      case Some(Shell)      => Some(TerrainTile.shell)
+      case None             => None
     }
   }
 
@@ -90,14 +96,14 @@ class WorldRenderer(
     )
   }
 
-  def areaTile(x: Int, y: Int, lower: Terrain, region: Region[BufferedImage]) = {
+  def areaTile(x: Int, y: Int, level: Int, region: Region[BufferedImage]) = {
     region.choose(
       x,
       y,
-      world.get(x, y-1).terrain == lower,
-      world.get(x+1, y).terrain == lower,
-      world.get(x, y+1).terrain == lower,
-      world.get(x-1, y).terrain == lower
+      world.get(x, y-1).terrain.level < level,
+      world.get(x+1, y).terrain.level < level,
+      world.get(x, y+1).terrain.level < level,
+      world.get(x-1, y).terrain.level < level
     )
   }
 }
