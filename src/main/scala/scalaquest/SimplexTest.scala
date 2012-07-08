@@ -14,7 +14,7 @@ object SimplexTest {
 
   def showFrame(): Unit = {
     val frame = new JFrame("Simplex test")
-    val canvas = new NoiseCanvas
+    val canvas = new SimplexCanvas
     frame.setContentPane(canvas)
     frame.pack()
     frame.setVisible(true)
@@ -25,9 +25,9 @@ object SimplexTest {
     }
   }
 
-  class NoiseCanvas extends JPanel {
+  class SimplexCanvas extends JPanel {
     val tileSize = 16
-    var rootPos = Vec(0, 0)
+    var viewPos = Vec(0, 0)
 
     setPreferredSize(new Dimension(
       500,
@@ -35,7 +35,7 @@ object SimplexTest {
     ))
 
     def frame(): Unit = {
-      rootPos += Vec(.1, .1)
+      viewPos += Vec(.1, .1)
       repaint()
     }
 
@@ -59,7 +59,7 @@ object SimplexTest {
         x <- 0.until(size.width, tileSize)
         y <- 0.until(size.height, tileSize)
         val screenPos = Vec(x, y)
-        val worldPos  = rootPos + screenPos/tileSize
+        val worldPos  = viewPos + screenPos/tileSize
         // val level = .5 + noise(worldPos, .01, .3)
         val level = .5 + noise(worldPos, .05, .3) + noise(worldPos, .2, .2)
         // val level = threshold(.5 + noise(worldPos, .01, .3) + noise(worldPos, .1, .2))

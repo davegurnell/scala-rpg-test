@@ -29,8 +29,8 @@ trait SpriteRenderer {
 
   def tileDesBox(pos: Vec): AxisBox = {
     AxisBox.xywh(
-      Tile.size * pos.x,
-      Tile.size * pos.y,
+      pos.x,
+      pos.y,
       Tile.size,
       Tile.size
     )

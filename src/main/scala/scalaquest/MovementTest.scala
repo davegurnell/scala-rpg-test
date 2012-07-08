@@ -81,13 +81,13 @@ object MovementTest {
       for {
         j <- 0 until worldSize
         i <- 0 until worldSize
-      } paintTile(g, Vec(i, j), Tile.grass)
+      } paintTile(g, Vec(i, j) * Tile.size, Tile.grass)
     }
 
     def paintWorldUnderPlayer(g: Graphics2D): Unit = {
       val base = playerPos.floor
       for(x <- -1 to 1; y <- -1 to 1) {
-        paintTile(g, base + Vec(x, y), Tile.grass)
+        paintTile(g, (base + Vec(x, y)) * Tile.size, Tile.grass)
       }
     }
 

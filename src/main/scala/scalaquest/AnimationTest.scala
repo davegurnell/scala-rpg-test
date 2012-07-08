@@ -52,7 +52,7 @@ object AnimationTest {
           y <- 0 to 2
           val tile = if(x == 1 && y == 1) Tile.grass else Tile.pavement
           val pos  = rowPos + Vec(x, y)
-        } paintTile(g, pos, tile)
+        } paintTile(g, pos * Tile.size, tile)
 
         paintSprite(g, rowPos + Vec(1, 1), sprite)
         paintLabel(g, rowPos + Vec(2.75, 1.75), sprite.name)

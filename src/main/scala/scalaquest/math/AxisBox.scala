@@ -37,7 +37,8 @@ case class AxisBox(val a: Vec, val b: Vec) extends Area {
 
   def clip(p: Vec) = Vec(
     math.max(x0, math.min(x1, p.x)),
-    math.max(y0, math.min(y1, p.y)))
+    math.max(y0, math.min(y1, p.y))
+  )
 }
 
 object AxisBox {
